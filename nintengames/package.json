@@ -1,0 +1,33 @@
+{
+  "name": "nintengames",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@nestjs/common": "^11.1.3",
+    "@nestjs/core": "^11.1.3",
+    "@nestjs/platform-express": "^11.1.3",
+    "@nestjs/testing": "^11.1.3",
+    "@prisma/client": "^6.11.1",
+    "bcryptjs": "^3.0.2",
+    "cookies-next": "^6.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "next": "15.3.5",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "reflect-metadata": "^0.2.2",
+    "rxjs": "^7.8.2"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3",
+    "@types/node": "^24.0.14",
+    "eslint": "^9",
+    "eslint-config-next": "15.3.5",
+    "prisma": "^6.11.1"
+  }
+}
