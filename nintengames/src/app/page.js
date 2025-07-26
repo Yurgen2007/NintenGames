@@ -1,4 +1,4 @@
-"use client"; // Componente se ejecuta en el cliente
+"use client"; 
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -33,7 +33,7 @@ export default function Home() {
       if (data.token) {
         localStorage.setItem("token", data.token);
         console.log("Inicio de sesión exitoso:", data);
-        router.push("/dashboard");
+        router.push("/administrar");
       } else {
         throw new Error("Token no recibido");
       }

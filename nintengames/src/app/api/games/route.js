@@ -1,17 +1,21 @@
+// app/api/games/route.js
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { verifyToken } from "@/utils/jwt";
 
-const checkAuth = (request) => {
-  const token = request.headers.get("authorization")?.split(" ")[1];
+// Validación del token
+const checkAuth = async (request) => {
+  const { authorization } = Object.fromEntries(request.headers);
+  const token = authorization?.split(" ")[1];
   if (!token) throw new Error("Token no enviado");
 
   const payload = verifyToken(token);
   if (!payload) throw new Error("Acceso no autorizado");
 };
+
 export async function GET(request) {
   try {
-    checkAuth(request);
+    await checkAuth(request);
     const games = await prisma.games.findMany();
     return NextResponse.json(games);
   } catch (e) {
@@ -21,19 +25,23 @@ export async function GET(request) {
 
 export async function POST(request) {
   try {
-    checkAuth(request);
-    const json = await request.json();
+    await checkAuth(request);
+
+    const body = await request.json();
+
     const game = await prisma.games.create({
       data: {
-        title: json.title,
-        platform_id: json.platform_id,
-        category_id: json.category_id,
-        cover: json.cover,
-        year: new Date(),
+        title: body.title,
+        platform_id: parseInt(body.platform_id),
+        category_id: parseInt(body.category_id),
+        year: new Date(parseInt(body.year), 0),
+        cover: body.cover, // es una URL tipo "/uploads/archivo.png"
       },
     });
+
     return NextResponse.json(game);
   } catch (e) {
+    console.error("Error en POST /api/games:", e);
     return NextResponse.json({ error: e.message }, { status: 401 });
   }
 }
