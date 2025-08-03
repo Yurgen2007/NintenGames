@@ -6,6 +6,8 @@ import { useState, useEffect } from "react";
 import styles from "../styles/adicionar.module.css";
 import ProtectedRoute from "@/app/components/ProtectedRoute";
 import axios from "axios";
+import Swal from "sweetalert2";
+import Image from "next/image";
 
 export default function Dashboard() {
   const router = useRouter();
@@ -21,9 +23,16 @@ export default function Dashboard() {
 
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        const token = localStorage.getItem("token");
+      const token = localStorage.getItem("token");
 
+      if (!token) {
+        Swal.fire("Acceso denegado", "Debes iniciar sesión", "warning").then(
+          () => router.push("/")
+        );
+        return;
+      }
+
+      try {
         const [platformsRes, categoriesRes] = await Promise.all([
           axios.get("http://localhost:3000/api/platforms", {
             headers: { Authorization: `Bearer ${token}` },
@@ -37,11 +46,16 @@ export default function Dashboard() {
         setCategories(categoriesRes.data);
       } catch (err) {
         console.error("Error al cargar datos:", err);
+        Swal.fire(
+          "Error",
+          "No se pudieron cargar plataformas o categorías",
+          "error"
+        ).then(() => router.push("/"));
       }
     };
 
     fetchData();
-  }, []);
+  }, [router]);
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -55,21 +69,23 @@ export default function Dashboard() {
     e.preventDefault();
 
     if (!title || !platformId || !categoryId || !year || !cover) {
-      alert("Todos los campos son obligatorios.");
+      Swal.fire(
+        "Campos incompletos",
+        "Todos los campos son obligatorios",
+        "warning"
+      );
       return;
     }
 
     try {
       const token = localStorage.getItem("token");
 
-      // 1. Subir imagen primero
       const imgForm = new FormData();
       imgForm.append("cover", cover);
 
       const imgRes = await axios.post("/api/upload", imgForm);
-      const imageUrl = imgRes.data.imageUrl; // "/uploads/archivo.png"
+      const imageUrl = imgRes.data.imageUrl;
 
-      // 2. Enviar datos del videojuego
       await axios.post(
         "http://localhost:3000/api/games",
         {
@@ -86,10 +102,12 @@ export default function Dashboard() {
         }
       );
 
-      router.push("/administrar");
+      Swal.fire("¡Éxito!", "Videojuego guardado correctamente", "success").then(
+        () => router.push("/administrar")
+      );
     } catch (error) {
       console.error("Error al guardar el videojuego:", error);
-      alert("Error al guardar el videojuego. Revisa la consola.");
+      Swal.fire("Error", "No se pudo guardar el videojuego", "error");
     }
   };
 
@@ -110,7 +128,7 @@ export default function Dashboard() {
         </div>
 
         <img
-          src={preview || "/image.png"}
+          src={preview || "/camara.png"}
           alt="Preview"
           width={180}
           height={180}

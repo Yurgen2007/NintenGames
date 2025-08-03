@@ -38,23 +38,44 @@ export async function DELETE(request, { params }) {
 export async function PUT(request, context) {
   try {
     checkAuth(request);
+
     const { params } = context;
     const id = parseInt(params.id);
-    const body = await request.json();
+
+    const formData = await request.formData();
+
+    const title = formData.get("title");
+    const platform_id = parseInt(formData.get("platform_id"));
+    const category_id = parseInt(formData.get("category_id"));
+    const year = new Date(formData.get("year"));
+    const file = formData.get("cover");
+
+    const dataToUpdate = {
+      title,
+      platform_id,
+      category_id,
+      year,
+    };
+
+    if (file && file.name) {
+      const bytes = await file.arrayBuffer();
+      const buffer = Buffer.from(bytes);
+      const filename = `${Date.now()}-${file.name}`;
+      const path = require("path");
+      const fs = require("fs");
+      const filePath = path.join(process.cwd(), "public/uploads", filename);
+      fs.writeFileSync(filePath, buffer);
+      dataToUpdate.cover = `/uploads/${filename}`;
+    }
 
     const game = await prisma.games.update({
       where: { id },
-      data: {
-        title: body.title,
-        platform_id: body.platform_id,
-        category_id: body.category_id,
-        cover: body.cover,
-        year: body.year,
-      },
+      data: dataToUpdate,
     });
 
     return NextResponse.json(game);
   } catch (e) {
+    console.error("❌ Error en PUT /api/games/[id]:", e);
     return NextResponse.json({ error: e.message }, { status: 401 });
   }
 }

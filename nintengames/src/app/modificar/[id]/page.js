@@ -1,11 +1,13 @@
 "use client";
 
 import Image from "next/image";
-import styles from "../../styles/modificar.module.css";
 import { FiCamera } from "react-icons/fi";
 import { useRouter, useParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
+import styles from "../../styles/modificar.module.css";
+import ProtectedRoute from "@/app/components/ProtectedRoute";
 import axios from "axios";
+import Swal from "sweetalert2";
 
 export default function Modificar() {
   const router = useRouter();
@@ -13,27 +15,37 @@ export default function Modificar() {
   const id = params?.id;
 
   const [juego, setJuego] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
   const [plataformas, setPlataformas] = useState([]);
   const [categorias, setCategorias] = useState([]);
-  const [imagePreview, setImagePreview] = useState("");
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       const token = localStorage.getItem("token");
 
-      try {
-        const token = localStorage.getItem("token");
+      if (!token) {
+        Swal.fire("Acceso denegado", "Debes iniciar sesión", "warning").then(
+          () => router.push("/")
+        );
+        return;
+      }
 
-        await axios.put(`/api/games/${id}`, formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${token}`, // 🔑 esto es lo que faltaba
-          },
+      try {
+        const { data } = await axios.get(`/api/games/${id}`, {
+          headers: { Authorization: `Bearer ${token}` },
         });
-        setJuego(data);
+
+        const parsedYear = data.year ? new Date(data.year).getFullYear() : "";
+
+        setJuego({ ...data, year: parsedYear });
         setImagePreview(data.cover);
       } catch (err) {
-        console.error("❌ Error al obtener videojuego:", err);
+        console.error("Error al obtener videojuego:", err);
+        Swal.fire("Error", "No se pudo cargar el videojuego", "error").then(
+          () => router.push("/")
+        );
+        return;
       }
 
       try {
@@ -48,12 +60,19 @@ export default function Modificar() {
         setPlataformas(platData.data);
         setCategorias(catData.data);
       } catch (err) {
-        console.error("❌ Error al obtener plataformas/categorías:", err);
+        console.error("Error al obtener plataformas/categorías:", err);
+        Swal.fire(
+          "Error",
+          "No se pudieron cargar plataformas o categorías",
+          "error"
+        );
+      } finally {
+        setLoading(false);
       }
     };
 
     if (id) fetchData();
-  }, [id]);
+  }, [id, router]);
 
   const handleInputChange = (e) => {
     setJuego({ ...juego, [e.target.name]: e.target.value });
@@ -67,9 +86,23 @@ export default function Modificar() {
     }
   };
 
-  const handleModificar = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const token = localStorage.getItem("token");
+
+    if (
+      !juego.title ||
+      !juego.platform_id ||
+      !juego.category_id ||
+      !juego.year
+    ) {
+      Swal.fire(
+        "Campos incompletos",
+        "Todos los campos son obligatorios",
+        "warning"
+      );
+      return;
+    }
 
     try {
       const formData = new FormData();
@@ -82,8 +115,6 @@ export default function Modificar() {
         formData.append("cover", juego.cover);
       }
 
-      console.log("📦 Enviando a backend:", [...formData.entries()]);
-
       await axios.put(`/api/games/${id}`, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -91,100 +122,105 @@ export default function Modificar() {
         },
       });
 
-      alert("Juego modificado exitosamente");
-      router.push("/dashboard");
-    } catch (error) {
-      console.error("❌ Error al modificar:", error);
-      alert("Error al modificar. Verifica consola.");
+      Swal.fire(
+        "¡Éxito!",
+        "Videojuego modificado correctamente",
+        "success"
+      ).then(() => router.push("/administrar"));
+    } catch (err) {
+      console.error("Error al modificar:", err);
+      Swal.fire("Error", "No se pudo modificar el videojuego", "error");
     }
   };
 
-  if (!juego) return <p>Cargando...</p>;
+  if (loading || !juego) return null;
 
   return (
-    <div className={styles.modificar}>
-      <div className={styles.topBar}>
-        <h1 className={styles.titulo}>
-          <span className={styles.tituloParte1}>Modificar</span>{" "}
-          <span className={styles.tituloParte2}>VideoJuego</span>
-        </h1>
-        <button
-          className={styles.closeBtn}
-          onClick={() => router.push("/administrar")}
-        >
-          ✕
-        </button>
-      </div>
+    <ProtectedRoute>
+      <div className={styles.modificar}>
+        <div className={styles.topBar}>
+          <h1 className={styles.titulo}>
+            <span className={styles.tituloParte1}>Modificar</span>{" "}
+            <span className={styles.tituloParte2}>VideoJuego</span>
+          </h1>
+          <button
+            className={styles.closeBtn}
+            onClick={() => router.push("/administrar")}
+          >
+            ✕
+          </button>
+        </div>
 
-      <Image
-        src={
-          typeof imagePreview === "string"
-            ? imagePreview
-            : URL.createObjectURL(imagePreview)
-        }
-        alt="Portada"
-        width={180}
-        height={180}
-        className={styles.juegoImagen}
-      />
-
-      <div className={styles.inputGroup}>
-        <input
-          type="text"
-          className={styles.input}
-          name="title"
-          value={juego.title}
-          onChange={handleInputChange}
+        <Image
+          src={imagePreview || "/image.png"}
+          alt="Portada"
+          width={180}
+          height={180}
+          className={styles.juegoImagen}
         />
 
-        <select
-          className={styles.select}
-          name="platform_id"
-          value={juego.platform_id}
-          onChange={handleInputChange}
-        >
-          {plataformas.map((p) => (
-            <option key={p.id} value={p.id}>
-              {p.name}
-            </option>
-          ))}
-        </select>
-
-        <select
-          className={styles.select}
-          name="category_id"
-          value={juego.category_id}
-          onChange={handleInputChange}
-        >
-          {categorias.map((c) => (
-            <option key={c.id} value={c.id}>
-              {c.name}
-            </option>
-          ))}
-        </select>
-
-        <label className={styles.fileInputLabel}>
-          Cambiar Portada
-          <FiCamera className={styles.iconoCamaraDerecha} />
+        <form className={styles.inputGroup} onSubmit={handleSubmit}>
           <input
-            type="file"
-            className={styles.fileInput}
-            onChange={handleImageChange}
+            type="text"
+            className={styles.input}
+            name="title"
+            value={juego.title}
+            onChange={handleInputChange}
           />
-        </label>
 
-        <input
-          className={styles.input}
-          name="year"
-          value={juego.year}
-          onChange={handleInputChange}
-          placeholder="Año de lanzamiento"
-        />
+          <select
+            className={styles.select}
+            name="platform_id"
+            value={juego.platform_id}
+            onChange={handleInputChange}
+          >
+            {plataformas.map((p) => (
+              <option key={p.id} value={p.id}>
+                {p.name}
+              </option>
+            ))}
+          </select>
 
-        <button className={styles.boton} onClick={handleModificar}>
-          Modificar
-        </button>
+          <select
+            className={styles.select}
+            name="category_id"
+            value={juego.category_id}
+            onChange={handleInputChange}
+          >
+            {categorias.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.name}
+              </option>
+            ))}
+          </select>
+
+          <label htmlFor="cover" className={styles.fileInputLabel}>
+            Cambiar Portada
+            <FiCamera className={styles.iconoCamaraDerecha} />
+            <input
+              type="file"
+              id="cover"
+              name="cover"
+              accept="image/*"
+              className={styles.fileInput}
+              onChange={handleImageChange}
+            />
+          </label>
+
+          <input
+            type="number"
+            className={styles.input}
+            name="year"
+            value={juego.year}
+            onChange={handleInputChange}
+            placeholder="Año de lanzamiento"
+          />
+
+          <button type="submit" className={styles.boton}>
+            Modificar
+          </button>
+        </form>
       </div>
-    </div>
+    </ProtectedRoute>
   );
 }

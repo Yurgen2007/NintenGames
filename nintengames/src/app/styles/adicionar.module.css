@@ -54,12 +54,14 @@
 }
 
 .juegoImagen {
+  width: 180px;
+  height: 180px;
   border-radius: 50%;
   object-fit: cover;
   border: 4px solid #bd9696;
   background-color: #4d2a2a;
-  margin-bottom: 4rem;
   margin-top: 40px;
+  margin-bottom: 4rem;
 }
 
 .inputGroup {
@@ -95,7 +97,6 @@
   outline: none;
   appearance: none;
 
-  background-image: url("/flecha.png");
   background-repeat: no-repeat;
   background-position: right 1rem center;
   background-size: 1rem;
