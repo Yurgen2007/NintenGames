@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import styles from "../styles/administrar.module.css";
-import ProtectedRoute from "@/app/components/ProtectedRoute";
+import ProtectedRoute from "../components/ProtectedRoute.jsx";
 import Swal from "sweetalert2";
 
 // Función para obtener los juegos desde el backend
@@ -145,7 +145,12 @@ export default function Dashboard() {
                     className={`${styles.iconButton} ${styles.ver}`}
                     onClick={() => router.push(`/consultar/${juego.id}`)}
                   >
-                    <Image src="/buscar.png" alt="Ver" width={16} height={16} />
+                    <Image
+                      src="/btn-show.svg"
+                      alt="Ver"
+                      width={45}
+                      height={30}
+                    />
                   </button>
 
                   <button
@@ -153,10 +158,10 @@ export default function Dashboard() {
                     onClick={() => router.push(`/modificar/${juego.id}`)}
                   >
                     <Image
-                      src="/edit.png"
+                      src="/btn-edit.svg"
                       alt="Editar"
-                      width={16}
-                      height={16}
+                      width={45}
+                      height={30}
                     />
                   </button>
 
@@ -165,7 +170,7 @@ export default function Dashboard() {
                     onClick={() => handleDelete(juego.id)}
                   >
                     <Image
-                      src="/delete.png"
+                      src="/deletesi.png"
                       alt="Eliminar"
                       width={25}
                       height={20}

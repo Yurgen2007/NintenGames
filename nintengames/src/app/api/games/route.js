@@ -1,7 +1,6 @@
-// app/api/games/route.js
 import { NextResponse } from "next/server";
-import prisma from "@/lib/prisma";
-import { verifyToken } from "@/utils/jwt";
+import prisma from "../../../lib/prisma";
+import { verifyToken } from "../../../utils/jwt";
 
 // Validación del token
 const checkAuth = async (request) => {
@@ -13,6 +12,21 @@ const checkAuth = async (request) => {
   if (!payload) throw new Error("Acceso no autorizado");
 };
 
+/**
+ * @swagger
+ * /api/games:
+ *   get:
+ *     summary: Obtener todos los videojuegos
+ *     tags:
+ *       - Games
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Lista de videojuegos obtenida correctamente
+ *       401:
+ *         description: Error de autenticación
+ */
 export async function GET(request) {
   try {
     await checkAuth(request);
@@ -23,6 +37,45 @@ export async function GET(request) {
   }
 }
 
+/**
+ * @swagger
+ * /api/games:
+ *   post:
+ *     summary: Crear un nuevo videojuego
+ *     tags:
+ *       - Games
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - title
+ *               - platform_id
+ *               - category_id
+ *               - year
+ *               - cover
+ *             properties:
+ *               title:
+ *                 type: string
+ *               platform_id:
+ *                 type: integer
+ *               category_id:
+ *                 type: integer
+ *               year:
+ *                 type: integer
+ *               cover:
+ *                 type: string
+ *                 format: uri
+ *     responses:
+ *       200:
+ *         description: Videojuego creado correctamente
+ *       401:
+ *         description: Error de autenticación
+ */
 export async function POST(request) {
   try {
     await checkAuth(request);

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import prisma from "@/lib/prisma";
-import { verifyToken } from "@/utils/jwt";
+import prisma from "../../../../lib/prisma.js";
+import { verifyToken } from "../../../../utils/jwt.js";
 
 const checkAuth = (request) => {
   const token = request.headers.get("authorization")?.split(" ")[1];
@@ -10,6 +10,25 @@ const checkAuth = (request) => {
   if (!payload) throw new Error("Acceso no autorizado");
 };
 
+/**
+ * @swagger
+ * /api/categories/{id}:
+ *   get:
+ *     summary: Obtener una categoría por su ID
+ *     tags: [Categories]
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID de la categoría
+ *     responses:
+ *       200:
+ *         description: Categoría encontrada
+ *       401:
+ *         description: No autorizado
+ */
 export async function GET(request, { params }) {
   try {
     checkAuth(request);
@@ -23,6 +42,24 @@ export async function GET(request, { params }) {
   }
 }
 
+/**
+ * @swagger
+ * /api/categories/{id}:
+ *   delete:
+ *     summary: Eliminar una categoría por ID
+ *     tags: [Categories]
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Categoría eliminada
+ *       401:
+ *         description: No autorizado
+ */
 export async function DELETE(request, { params }) {
   try {
     checkAuth(request);
@@ -34,6 +71,33 @@ export async function DELETE(request, { params }) {
   }
 }
 
+/**
+ * @swagger
+ * /api/categories/{id}:
+ *   put:
+ *     summary: Actualizar una categoría por ID
+ *     tags: [Categories]
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Categoría actualizada
+ *       401:
+ *         description: No autorizado
+ */
 export async function PUT(request, { params }) {
   try {
     checkAuth(request);

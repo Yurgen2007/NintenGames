@@ -7,6 +7,26 @@ const checkAuth = (request) => {
   if (!verifyToken(token)) throw new Error("Acceso no autorizado");
 };
 
+/**
+ * @swagger
+ * /api/usuarios/{id}:
+ *   get:
+ *     summary: Obtener un usuario por ID
+ *     tags:
+ *       - Usuarios
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID del usuario
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Datos del usuario
+ *       401:
+ *         description: Acceso no autorizado
+ */
 export async function GET(request, context) {
   try {
     checkAuth(request);
@@ -21,6 +41,26 @@ export async function GET(request, context) {
   }
 }
 
+/**
+ * @swagger
+ * /api/usuarios/{id}:
+ *   delete:
+ *     summary: Eliminar un usuario por ID
+ *     tags:
+ *       - Usuarios
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID del usuario a eliminar
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Usuario eliminado correctamente
+ *       401:
+ *         description: Acceso no autorizado
+ */
 export async function DELETE(request, context) {
   try {
     checkAuth(request);
@@ -37,6 +77,39 @@ export async function DELETE(request, context) {
   }
 }
 
+/**
+ * @swagger
+ * /api/usuarios/{id}:
+ *   put:
+ *     summary: Actualizar un usuario por ID
+ *     tags:
+ *       - Usuarios
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID del usuario a actualizar
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               fullname:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Usuario actualizado correctamente
+ *       401:
+ *         description: Acceso no autorizado
+ */
 export async function PUT(request, context) {
   try {
     checkAuth(request);
@@ -55,6 +128,6 @@ export async function PUT(request, context) {
 
     return NextResponse.json(user);
   } catch (error) {
-    return NextResponse.json({ error: e.message }, { status: 401 });
+    return NextResponse.json({ error: error.message }, { status: 401 });
   }
 }

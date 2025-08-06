@@ -27,7 +27,11 @@
     "react-icons": "^5.5.0",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.2",
-    "sweetalert2": "^11.22.2"
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1",
+    "swagger-ui-react": "^5.27.1",
+    "sweetalert2": "^11.22.2",
+    "yamljs": "^0.3.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

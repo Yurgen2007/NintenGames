@@ -11,6 +11,21 @@ const checkAuth = (request) => {
   if (!payload) throw new Error("Acceso no autorizado");
 };
 
+/**
+ * @swagger
+ * /api/users:
+ *   get:
+ *     summary: Obtener todos los usuarios
+ *     tags:
+ *       - Users
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Lista de usuarios
+ *       401:
+ *         description: Acceso no autorizado
+ */
 export async function GET(request) {
   try {
     checkAuth(request);
@@ -22,6 +37,32 @@ export async function GET(request) {
   }
 }
 
+/**
+ * @swagger
+ * /api/users:
+ *   post:
+ *     summary: Crear un nuevo usuario
+ *     tags:
+ *       - Users
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               fullname:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Usuario creado correctamente
+ *       400:
+ *         description: Error al crear el usuario
+ */
 export async function POST(request) {
   const body = await request.json();
 

@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
-import prisma from "@/lib/prisma";
+import prisma from "../../../../lib/prisma.js";
+import { verifyToken } from "../../../../utils/jwt.js";
 
-import { verifyToken } from "@/utils/jwt";
-
+// Middleware para verificar el token JWT
 const checkAuth = (request) => {
   const token = request.headers.get("authorization")?.split(" ")[1];
   if (!token) throw new Error("Token no enviado");
@@ -11,6 +11,25 @@ const checkAuth = (request) => {
   if (!payload) throw new Error("Acceso no autorizado");
 };
 
+/**
+ * @swagger
+ * /api/games/{id}:
+ *   get:
+ *     summary: Obtener un videojuego por ID
+ *     tags: [Games]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID del videojuego
+ *     responses:
+ *       200:
+ *         description: Videojuego obtenido correctamente
+ *       401:
+ *         description: Error de autenticación
+ */
 export async function GET(request, context) {
   try {
     checkAuth(request);
@@ -24,6 +43,25 @@ export async function GET(request, context) {
   }
 }
 
+/**
+ * @swagger
+ * /api/games/{id}:
+ *   delete:
+ *     summary: Eliminar un videojuego por ID
+ *     tags: [Games]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID del videojuego
+ *     responses:
+ *       200:
+ *         description: Videojuego eliminado correctamente
+ *       401:
+ *         description: Error de autenticación
+ */
 export async function DELETE(request, { params }) {
   try {
     checkAuth(request);
@@ -35,6 +73,53 @@ export async function DELETE(request, { params }) {
   }
 }
 
+/**
+ * @swagger
+ * /api/games/{id}:
+ *   put:
+ *     summary: Actualizar un videojuego por ID
+ *     tags: [Games]
+ *     consumes:
+ *       - multipart/form-data
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID del videojuego
+ *       - in: formData
+ *         name: title
+ *         type: string
+ *         required: true
+ *         description: Título del videojuego
+ *       - in: formData
+ *         name: platform_id
+ *         type: integer
+ *         required: true
+ *         description: ID de la plataforma
+ *       - in: formData
+ *         name: category_id
+ *         type: integer
+ *         required: true
+ *         description: ID de la categoría
+ *       - in: formData
+ *         name: year
+ *         type: string
+ *         format: date
+ *         required: true
+ *         description: Año de lanzamiento
+ *       - in: formData
+ *         name: cover
+ *         type: file
+ *         required: false
+ *         description: Imagen de portada del videojuego
+ *     responses:
+ *       200:
+ *         description: Videojuego actualizado correctamente
+ *       401:
+ *         description: Error de autenticación
+ */
 export async function PUT(request, context) {
   try {
     checkAuth(request);

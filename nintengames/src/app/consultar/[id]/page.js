@@ -6,7 +6,7 @@ import Image from "next/image";
 import axios from "axios";
 import styles from "../../styles/consultar.module.css";
 import Swal from "sweetalert2";
-import ProtectedRoute from "@/app/components/ProtectedRoute";
+import ProtectedRoute from "../../components/ProtectedRoute.jsx";
 
 export default function ConsultaJuego() {
   const { id } = useParams();

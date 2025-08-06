@@ -1,5 +1,5 @@
-import prisma from "@/lib/prisma";
-import { signToken } from "@/utils/jwt";
+import prisma from "../../../../lib/prisma.js";
+import { signToken } from "../../../../utils/jwt.js";
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 

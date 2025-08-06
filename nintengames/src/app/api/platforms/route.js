@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import prisma from "@/lib/prisma";
-import { verifyToken } from "@/utils/jwt";
+import prisma from "../../../lib/prisma.js";
+import { verifyToken } from "../../../utils/jwt.js";
 
 const checkAuth = (request) => {
   const token = request.headers.get("authorization")?.split(" ")[1];
@@ -10,6 +10,21 @@ const checkAuth = (request) => {
   if (!payload) throw new Error("Acceso no autorizado");
 };
 
+/**
+ * @swagger
+ * /api/platforms:
+ *   get:
+ *     summary: Obtener todas las plataformas
+ *     tags:
+ *       - Platforms
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Lista de plataformas obtenida exitosamente
+ *       401:
+ *         description: Acceso no autorizado
+ */
 export async function GET(request) {
   try {
     checkAuth(request);
@@ -21,6 +36,30 @@ export async function GET(request) {
   }
 }
 
+/**
+ * @swagger
+ * /api/platforms:
+ *   post:
+ *     summary: Crear una nueva plataforma
+ *     tags:
+ *       - Platforms
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Plataforma creada exitosamente
+ *       401:
+ *         description: Acceso no autorizado
+ */
 export async function POST(request) {
   try {
     checkAuth(request);

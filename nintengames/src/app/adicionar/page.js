@@ -4,7 +4,7 @@ import { FiCamera } from "react-icons/fi";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import styles from "../styles/adicionar.module.css";
-import ProtectedRoute from "@/app/components/ProtectedRoute";
+import ProtectedRoute from "../components/ProtectedRoute.jsx";
 import axios from "axios";
 import Swal from "sweetalert2";
 import Image from "next/image";
