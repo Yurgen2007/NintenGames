@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import styles from "../styles/administrar.module.css";
 import ProtectedRoute from "../components/ProtectedRoute.jsx";
 import Swal from "sweetalert2";
+import { apiFetch } from "../../lib/api.js";
 
 // Función para obtener los juegos desde el backend
 const getVideojuegos = async () => {
@@ -15,19 +16,11 @@ const getVideojuegos = async () => {
     throw new Error("Sin token de autenticación");
   }
 
-  const res = await fetch("http://localhost:3000/api/games", {
+  return await apiFetch("/api/games", {
     headers: {
       Authorization: `Bearer ${token}`,
     },
-    cache: "no-store",
   });
-
-  if (!res.ok) {
-    const error = await res.json();
-    throw new Error(error.error || "Error al obtener videojuegos");
-  }
-
-  return res.json();
 };
 
 export default function Dashboard() {
@@ -57,7 +50,7 @@ export default function Dashboard() {
     if (confirmar.isConfirmed) {
       try {
         const token = localStorage.getItem("token");
-        await fetch(`http://localhost:3000/api/games/${id}`, {
+        await apiFetch(`/api/games/${id}`, {
           method: "DELETE",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -170,10 +163,10 @@ export default function Dashboard() {
                     onClick={() => handleDelete(juego.id)}
                   >
                     <Image
-                      src="/deletesi.png"
+                      src="/delete.png"
                       alt="Eliminar"
-                      width={25}
-                      height={20}
+                      width={32}
+                      height={32}
                     />
                   </button>
                 </div>

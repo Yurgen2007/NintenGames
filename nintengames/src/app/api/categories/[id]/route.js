@@ -29,13 +29,17 @@ const checkAuth = (request) => {
  *       401:
  *         description: No autorizado
  */
-export async function GET(request, { params }) {
+export async function GET(request, context) {
   try {
     checkAuth(request);
+
+    const params = await context.params;
     const id = parseInt(params.id);
+
     const categori = await prisma.categories.findUnique({
       where: { id },
     });
+
     return NextResponse.json(categori);
   } catch (e) {
     return NextResponse.json({ error: e.message }, { status: 401 });

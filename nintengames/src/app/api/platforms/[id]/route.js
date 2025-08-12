@@ -33,9 +33,19 @@ const checkAuth = (request) => {
 export async function GET(request, context) {
   try {
     checkAuth(request);
-    const { params } = context;
+
+    const params = await context.params;
+    const id = parseInt(params.id);
+
+    if (isNaN(id)) {
+      return NextResponse.json(
+        { error: "ID must be a valid number" },
+        { status: 400 }
+      );
+    }
+
     const platform = await prisma.platforms.findUnique({
-      where: { id: parseInt(params.id) },
+      where: { id },
     });
 
     return NextResponse.json(platform);

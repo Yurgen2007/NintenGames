@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
-import prisma from "@/lib/prisma";
+import prisma from "../../../lib/prisma";
 import bcrypt from "bcryptjs";
-import { verifyToken } from "@/utils/jwt";
+import { verifyToken } from "../../../utils/jwt";
 
 const checkAuth = (request) => {
   const token = request.headers.get("authorization")?.split(" ")[1];

@@ -8,6 +8,7 @@ import ProtectedRoute from "../components/ProtectedRoute.jsx";
 import axios from "axios";
 import Swal from "sweetalert2";
 import Image from "next/image";
+import { apiFetch } from "../../lib/api.js";
 
 export default function Dashboard() {
   const router = useRouter();
@@ -34,16 +35,16 @@ export default function Dashboard() {
 
       try {
         const [platformsRes, categoriesRes] = await Promise.all([
-          axios.get("http://localhost:3000/api/platforms", {
+          apiFetch("/api/platforms", {
             headers: { Authorization: `Bearer ${token}` },
           }),
-          axios.get("http://localhost:3000/api/categories", {
+          apiFetch("/api/categories", {
             headers: { Authorization: `Bearer ${token}` },
           }),
         ]);
 
-        setPlatforms(platformsRes.data);
-        setCategories(categoriesRes.data);
+        setPlatforms(platformsRes);
+        setCategories(categoriesRes);
       } catch (err) {
         console.error("Error al cargar datos:", err);
         Swal.fire(
@@ -86,21 +87,20 @@ export default function Dashboard() {
       const imgRes = await axios.post("/api/upload", imgForm);
       const imageUrl = imgRes.data.imageUrl;
 
-      await axios.post(
-        "http://localhost:3000/api/games",
-        {
+      await apiFetch("/api/games", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
           title,
           platform_id: platformId,
           category_id: categoryId,
           year,
           cover: imageUrl,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+        }),
+      });
 
       Swal.fire("¡Éxito!", "Videojuego guardado correctamente", "success").then(
         () => router.push("/administrar")

@@ -3,10 +3,10 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
-import axios from "axios";
-import styles from "../../styles/consultar.module.css";
 import Swal from "sweetalert2";
+import styles from "../../styles/consultar.module.css";
 import ProtectedRoute from "../../components/ProtectedRoute.jsx";
+import { apiFetch } from "../../../lib/api.js";
 
 export default function ConsultaJuego() {
   const { id } = useParams();
@@ -30,29 +30,25 @@ export default function ConsultaJuego() {
       }
 
       try {
-        const res = await axios.get(`http://localhost:3000/api/games/${id}`, {
+        // GET juego
+        const game = await apiFetch(`/api/games/${id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-
-        const game = res.data;
         if (!isMounted) return;
         setJuego(game);
 
-        const [platRes, catRes] = await Promise.all([
-          axios.get(`http://localhost:3000/api/platforms/${game.platform_id}`, {
+        // GET plataforma y categoría
+        const [plat, cat] = await Promise.all([
+          apiFetch(`/api/platforms/${game.platform_id}`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
-          axios.get(
-            `http://localhost:3000/api/categories/${game.category_id}`,
-            {
-              headers: { Authorization: `Bearer ${token}` },
-            }
-          ),
+          apiFetch(`/api/categories/${game.category_id}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
         ]);
-
         if (!isMounted) return;
-        setPlatform(platRes.data?.name || "N/A");
-        setCategory(catRes.data?.name || "N/A");
+        setPlatform(plat.name || "N/A");
+        setCategory(cat.name || "N/A");
       } catch (error) {
         console.error("Error al obtener datos:", error);
         Swal.fire("Error", "No se pudo cargar el videojuego", "error").then(

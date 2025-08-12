@@ -33,10 +33,21 @@ const checkAuth = (request) => {
 export async function GET(request, context) {
   try {
     checkAuth(request);
-    const { params } = context;
+
+    const params = await context.params;
+    const id = parseInt(params.id);
+
+    if (isNaN(id)) {
+      return NextResponse.json(
+        { error: "ID must be a valid number" },
+        { status: 400 }
+      );
+    }
+
     const game = await prisma.games.findUnique({
-      where: { id: parseInt(params.id) },
+      where: { id },
     });
+
     return NextResponse.json(game);
   } catch (e) {
     return NextResponse.json({ error: e.message }, { status: 401 });
@@ -132,7 +143,8 @@ export async function PUT(request, context) {
     const title = formData.get("title");
     const platform_id = parseInt(formData.get("platform_id"));
     const category_id = parseInt(formData.get("category_id"));
-    const year = new Date(formData.get("year"));
+    const yearNum = parseInt(formData.get("year"));
+    const year = yearNum ? new Date(yearNum, 0, 1) : null; // 1 de enero del año dado
     const file = formData.get("cover");
 
     const dataToUpdate = {
@@ -160,7 +172,7 @@ export async function PUT(request, context) {
 
     return NextResponse.json(game);
   } catch (e) {
-    console.error("❌ Error en PUT /api/games/[id]:", e);
+    console.error(" Error en PUT /api/games/[id]:", e);
     return NextResponse.json({ error: e.message }, { status: 401 });
   }
 }

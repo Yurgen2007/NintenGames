@@ -6,8 +6,8 @@ import { useRouter, useParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import styles from "../../styles/modificar.module.css";
 import ProtectedRoute from "../../components/ProtectedRoute.jsx";
-import axios from "axios";
 import Swal from "sweetalert2";
+import { apiFetch } from "../../../lib/api.js";
 
 export default function Modificar() {
   const router = useRouter();
@@ -32,7 +32,8 @@ export default function Modificar() {
       }
 
       try {
-        const { data } = await axios.get(`/api/games/${id}`, {
+        // Obtener el juego
+        const data = await apiFetch(`/api/games/${id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -49,16 +50,17 @@ export default function Modificar() {
       }
 
       try {
+        // Obtener plataformas y categorías
         const [platData, catData] = await Promise.all([
-          axios.get("/api/platforms", {
+          apiFetch("/api/platforms", {
             headers: { Authorization: `Bearer ${token}` },
           }),
-          axios.get("/api/categories", {
+          apiFetch("/api/categories", {
             headers: { Authorization: `Bearer ${token}` },
           }),
         ]);
-        setPlataformas(platData.data);
-        setCategorias(catData.data);
+        setPlataformas(platData);
+        setCategorias(catData);
       } catch (err) {
         console.error("Error al obtener plataformas/categorías:", err);
         Swal.fire(
@@ -115,11 +117,13 @@ export default function Modificar() {
         formData.append("cover", juego.cover);
       }
 
-      await axios.put(`/api/games/${id}`, formData, {
+      await apiFetch(`/api/games/${id}`, {
+        method: "PUT",
         headers: {
           Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data",
+          // No pongas Content-Type aquí porque fetch lo asigna automáticamente cuando usas FormData
         },
+        body: formData,
       });
 
       Swal.fire(
