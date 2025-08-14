@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
-import { verifyToken } from "@/utils/jwt"; // Asegúrate de que esta función esté definida
-
+import { verifyToken } from "@/utils/jwt"; 
 const checkAuth = (request) => {
   const token = request.headers.get("authorization")?.split(" ")[1];
   if (!verifyToken(token)) throw new Error("Acceso no autorizado");

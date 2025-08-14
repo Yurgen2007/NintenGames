@@ -14,11 +14,11 @@ export default function Modificar() {
   const params = useParams();
   const id = params?.id;
 
-  const [juego, setJuego] = useState(null);
-  const [imagePreview, setImagePreview] = useState(null);
+  const [juego, setJuego] = useState(null); //datos del juego
+  const [imagePreview, setImagePreview] = useState(null); //vista previa de la imagen
   const [plataformas, setPlataformas] = useState([]);
   const [categorias, setCategorias] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true); //iniciador de carga
 
   useEffect(() => {
     const fetchData = async () => {
@@ -121,7 +121,6 @@ export default function Modificar() {
         method: "PUT",
         headers: {
           Authorization: `Bearer ${token}`,
-          // No pongas Content-Type aquí porque fetch lo asigna automáticamente cuando usas FormData
         },
         body: formData,
       });

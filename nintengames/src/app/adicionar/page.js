@@ -7,13 +7,13 @@ import styles from "../styles/adicionar.module.css";
 import ProtectedRoute from "../components/ProtectedRoute.jsx";
 import axios from "axios";
 import Swal from "sweetalert2";
-import Image from "next/image";
 import { apiFetch } from "../../lib/api.js";
 
 export default function Dashboard() {
   const router = useRouter();
 
   const [title, setTitle] = useState("");
+  const [version, setVersion] = useState("");
   const [platformId, setPlatformId] = useState("");
   const [categoryId, setCategoryId] = useState("");
   const [year, setYear] = useState("");
@@ -69,7 +69,7 @@ export default function Dashboard() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!title || !platformId || !categoryId || !year || !cover) {
+    if (!title || !version || !platformId || !categoryId || !year || !cover) {
       Swal.fire(
         "Campos incompletos",
         "Todos los campos son obligatorios",
@@ -95,6 +95,7 @@ export default function Dashboard() {
         },
         body: JSON.stringify({
           title,
+          version,
           platform_id: platformId,
           category_id: categoryId,
           year,
@@ -142,6 +143,14 @@ export default function Dashboard() {
             className={styles.input}
             value={title}
             onChange={(e) => setTitle(e.target.value)}
+          />
+
+          <input
+            type="text"
+            placeholder="Versión"
+            className={styles.input}
+            value={version}
+            onChange={(e) => setVersion(e.target.value)}
           />
 
           <select

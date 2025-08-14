@@ -30,14 +30,15 @@ export default function ConsultaJuego() {
       }
 
       try {
-        // GET juego
         const game = await apiFetch(`/api/games/${id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
+
+        console.log("📦 Datos recibidos del juego:", game);
+
         if (!isMounted) return;
         setJuego(game);
 
-        // GET plataforma y categoría
         const [plat, cat] = await Promise.all([
           apiFetch(`/api/platforms/${game.platform_id}`, {
             headers: { Authorization: `Bearer ${token}` },
@@ -46,6 +47,7 @@ export default function ConsultaJuego() {
             headers: { Authorization: `Bearer ${token}` },
           }),
         ]);
+
         if (!isMounted) return;
         setPlatform(plat.name || "N/A");
         setCategory(cat.name || "N/A");
@@ -97,14 +99,26 @@ export default function ConsultaJuego() {
             <div className={styles.label}>Título:</div>
             <div className={styles.valor}>{juego.title}</div>
           </div>
+
+          <div className={styles.campo}>
+            <div className={styles.label}>Versión:</div>
+            <div className={styles.valor}>
+              {juego.version !== null && juego.version !== undefined
+                ? juego.version
+                : "No disponible"}
+            </div>
+          </div>
+
           <div className={styles.campo}>
             <div className={styles.label}>Consola:</div>
             <div className={styles.valor}>{platform}</div>
           </div>
+
           <div className={styles.campo}>
             <div className={styles.label}>Categoría:</div>
             <div className={styles.valor}>{category}</div>
           </div>
+
           <div className={styles.campo}>
             <div className={styles.label}>Año:</div>
             <div className={styles.valor}>

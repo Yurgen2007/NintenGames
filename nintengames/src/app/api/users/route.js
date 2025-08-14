@@ -16,8 +16,9 @@ const checkAuth = (request) => {
  * /api/users:
  *   get:
  *     summary: Obtener todos los usuarios
+ *
  *     tags:
- *       - Users
+ *       - Usuarios
  *     security:
  *       - bearerAuth: []
  *     responses:
@@ -42,8 +43,9 @@ export async function GET(request) {
  * /api/users:
  *   post:
  *     summary: Crear un nuevo usuario
+ *
  *     tags:
- *       - Users
+ *       - Usuarios
  *     requestBody:
  *       required: true
  *       content:

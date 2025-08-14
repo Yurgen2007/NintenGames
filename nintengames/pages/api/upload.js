@@ -26,7 +26,7 @@ const upload = multer({ storage });
 // 3. Configurar ruta con nextConnect
 const apiRoute = nextConnect({
   onError(error, req, res) {
-    console.error("❌ Error en upload:", error); // <-- para ver detalles en consola
+    console.error(" Error en upload:", error); // <-- para ver detalles en consola
     res.status(500).json({ error: `Error al subir imagen: ${error.message}` });
   },
   onNoMatch(req, res) {
@@ -34,16 +34,13 @@ const apiRoute = nextConnect({
   },
 });
 
-// 4. Middleware para procesar 'cover'
 apiRoute.use(upload.single("cover"));
 
-// 5. Endpoint POST que retorna la URL
 apiRoute.post((req, res) => {
   const imageUrl = `/uploads/${req.file.filename}`;
   res.status(200).json({ imageUrl });
 });
 
-// 6. Configuración para evitar el bodyParser de Next
 export const config = {
   api: {
     bodyParser: false,

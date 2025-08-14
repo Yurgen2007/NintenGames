@@ -59,7 +59,6 @@ export default function Dashboard() {
 
         Swal.fire("Eliminado", "El videojuego ha sido eliminado", "success");
 
-        // 🔄 Quitar de la lista
         setVideojuegos((prev) => prev.filter((j) => j.id !== id));
       } catch (error) {
         console.error("Error al eliminar:", error);

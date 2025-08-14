@@ -85,10 +85,11 @@ export async function POST(request) {
     const game = await prisma.games.create({
       data: {
         title: body.title,
+        version: body.version || null,
         platform_id: parseInt(body.platform_id),
         category_id: parseInt(body.category_id),
         year: new Date(parseInt(body.year), 0),
-        cover: body.cover, // es una URL tipo "/uploads/archivo.png"
+        cover: body.cover,
       },
     });
 
