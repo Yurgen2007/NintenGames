@@ -1,4 +1,4 @@
-Pasos a seguir para colonar el repositorio
+Pasos a seguir para clonar el repositorio
 
 #1 primeramente clonamos el repositorio
 
