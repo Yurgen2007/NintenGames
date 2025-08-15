@@ -89,7 +89,7 @@
   flex-direction: column;
   align-items: center;
   gap: 16px;
-  margin-top: -150px; /* si necesitas subir todo */
+  margin-top: -150px; 
 }
 .email,
 .password {

@@ -26,7 +26,7 @@ const upload = multer({ storage });
 // 3. Configurar ruta con nextConnect
 const apiRoute = nextConnect({
   onError(error, req, res) {
-    console.error(" Error en upload:", error); // <-- para ver detalles en consola
+    console.error(" Error en upload:", error); //  para ver detalles en consola
     res.status(500).json({ error: `Error al subir imagen: ${error.message}` });
   },
   onNoMatch(req, res) {

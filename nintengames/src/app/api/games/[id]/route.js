@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import prisma from "../../../../lib/prisma.js";
 import { verifyToken } from "../../../../utils/jwt.js";
 
-// Middleware para verificar el token JWT
 const checkAuth = (request) => {
   const token = request.headers.get("authorization")?.split(" ")[1];
   if (!token) throw new Error("Token no enviado");
@@ -144,7 +143,7 @@ export async function PUT(request, context) {
     const platform_id = parseInt(formData.get("platform_id"));
     const category_id = parseInt(formData.get("category_id"));
     const yearNum = parseInt(formData.get("year"));
-    const year = yearNum ? new Date(yearNum, 0, 1) : null; // 1 de enero del año dado
+    const year = yearNum ? new Date(yearNum, 0, 1) : null; 
     const file = formData.get("cover");
 
     const dataToUpdate = {

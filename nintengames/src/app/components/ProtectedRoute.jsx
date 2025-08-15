@@ -5,19 +5,19 @@ import { useRouter } from "next/navigation";
 
 export default function ProtectedRoute({ children }) {
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(true); // Evita render inicial
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
 
     if (!token) {
-      router.replace("/"); // Redirige sin historial
+      router.replace("/");
     } else {
-      setIsLoading(false); // Token válido, muestra children
+      setIsLoading(false);
     }
   }, [router]);
 
-  if (isLoading) return null; // No renderiza nada hasta saber si hay token
+  if (isLoading) return null;
 
   return children;
 }

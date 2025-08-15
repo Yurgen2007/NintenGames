@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import prisma from "../../../lib/prisma";
 import { verifyToken } from "../../../utils/jwt";
 
-// Validación del token
 const checkAuth = async (request) => {
   const { authorization } = Object.fromEntries(request.headers);
   const token = authorization?.split(" ")[1];

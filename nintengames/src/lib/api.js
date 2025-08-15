@@ -13,15 +13,13 @@ export async function apiFetch(path, options = {}) {
     try {
       errorData = await res.json(); // Intenta leer JSON
     } catch {
-      // Si no tiene JSON no hace nada, queda vacío
     }
     throw new Error(errorData.error || "Error en la petición");
   }
 
-  // También maneja caso cuando no hay contenido JSON
   try {
     return await res.json();
   } catch {
-    return null; // o return {} si prefieres un objeto vacío
+    return null; 
   }
 }

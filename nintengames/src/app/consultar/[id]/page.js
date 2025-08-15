@@ -34,7 +34,7 @@ export default function ConsultaJuego() {
           headers: { Authorization: `Bearer ${token}` },
         });
 
-        console.log("📦 Datos recibidos del juego:", game);
+        console.log("Datos recibidos del juego:", game);
 
         if (!isMounted) return;
         setJuego(game);
